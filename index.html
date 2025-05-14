@@ -11,6 +11,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700&display=swap" rel="stylesheet">
     <link rel="icon" href="favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="static/styles/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 
 <body>
@@ -24,8 +25,8 @@
                 <a href="#reviews" class="nav-link">Отзывы</a>
             </nav>
             <div class="header-phone">
-                <i class="fas fa-phone-alt phone-icon"></i>
                 <a href="tel:+78001234567" class="phone-number">8 (800) 123-45-67</a>
+                <i class="fas fa-phone-alt phone-icon"></i>
             </div>
         </div>
     </header>
@@ -42,7 +43,7 @@
                         <h1>Продажа мотоциклов в Нижнем Новгороде</h1>
                         <p class="hero-subtitle">Подберем наилучший мотоцикл под ваш бюджет</p>
                     </div>
-                    <button class="hero-button" id="openModal">Заказать звонок</button>
+                    <button class="hero-button" id="scrollToServices">Перейти к услугам</button>
                 </div>
             </div>
         </div>
@@ -59,6 +60,7 @@
                         <div class="widget-content">
                             <h3 class="widget-title">🚛 Доставка из Китая "под ключ"</h3>
                             <p class="widget-description">Быстрая и надежная доставка в любой город России</p>
+                            <button class="service-button">Рассчитать стоимость</button>
                         </div>
                     </div>
 
@@ -69,6 +71,7 @@
                         <div class="widget-content">
                             <h3 class="widget-title">🏍️ Питбайки в наличии</h3>
                             <p class="widget-description">Новые и б/у модели с гарантией качества</p>
+                            <button class="service-button">Заказать звонок</button>
                         </div>
                     </div>
 
@@ -79,6 +82,7 @@
                         <div class="widget-content">
                             <h3 class="widget-title">💰 Оптовые предложения</h3>
                             <p class="widget-description">Специальные условия для бизнеса</p>
+                            <button class="service-button">Отправить запрос</button>
                         </div>
                     </div>
                 </div>
@@ -384,17 +388,21 @@
             }
 
             // Обработчики открытия модальных окон
-            if (openModalBtn) {
-                openModalBtn.addEventListener('click', () => openModal('modal'));
-            }
+            const scrollToServicesBtn = document.getElementById('scrollToServices');
+            if (scrollToServicesBtn) {
+                scrollToServicesBtn.addEventListener('click', function () {
+                    const servicesSection = document.getElementById('services');
+                    if (servicesSection) {
+                        const headerHeight = document.querySelector('header').offsetHeight;
+                        const targetPosition = servicesSection.getBoundingClientRect().top + window.pageYOffset - headerHeight;
 
-            if (orderFromBikesModalBtn) {
-                orderFromBikesModalBtn.addEventListener('click', () => {
-                    closeModal('bikesModal');
-                    openModal('modal');
+                        window.scrollTo({
+                            top: targetPosition,
+                            behavior: 'smooth'
+                        });
+                    }
                 });
             }
-
             // Обработчики закрытия модальных окон
             if (closeModalBtn) {
                 closeModalBtn.addEventListener('click', () => closeModal('modal'));
@@ -419,19 +427,21 @@
                 }
             });
 
-            // Обработчики виджетов услуг
-            if (calculatorWidget) {
-                calculatorWidget.addEventListener('click', () => openModal('calculatorModal'));
-            }
+            // Обработчики кнопок в виджетах услуг
+            document.querySelectorAll('.service-button').forEach(button => {
+                button.addEventListener('click', function (e) {
+                    e.stopPropagation(); // Предотвращаем срабатывание клика по всему виджету
 
-            if (bikesWidget) {
-                bikesWidget.addEventListener('click', () => openModal('bikesModal'));
-            }
-
-            if (contactWidget) {
-                contactWidget.addEventListener('click', () => openModal('contactModal'));
-            }
-
+                    const widget = this.closest('.service-widget');
+                    if (widget.id === 'calculatorWidget') {
+                        openModal('calculatorModal');
+                    } else if (widget.id === 'bikesWidget') {
+                        openModal('modal');
+                    } else if (widget.id === 'contactWidget') {
+                        openModal('contactModal');
+                    }
+                });
+            });
             // Обработчики форм
             if (callbackForm) {
                 callbackForm.addEventListener('submit', async (e) => {
